@@ -8,14 +8,11 @@ class AppController {
     }
   }
 
-  static async getStats(req, res) {
-    const users = await dbClient.nbUsers();
-    const files = await dbClient.nbFiles();
-    const obj = {
-      users,
-      files,
-    };
-    res.status(200).json(obj);
+  static getStats(req, res) {
+    Promise.all([dbClient.nbUsers(), dbClient.nbFiles()])
+      .then(([usersCount, filesCount]) => {
+        res.status(200).json({ users: usersCount, files: filesCount });
+      });
   }
 }
 
