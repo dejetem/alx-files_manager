@@ -1,14 +1,24 @@
 const express = require('express');
-const AppController = require('../controllers/AppController');
-const UsersController = require('../controllers/UsersController');
-const AuthController = require('../controllers/AuthController');
-const FilesController = require('../controllers/FilesController');
+const dbClient = require('../utils/db');
+const redisClient = require('../utils/redis');
 
 const router = express.Router();
-router.get('/status', AppController.getStatus);
-router.get('/stats', AppController.getStats);
-router.post('/users', UsersController.postNew);
-router.get('/users/me', UsersController.getMe);
-router.get('/connect', AuthController.getConnect);
-router.get('/disconnect', AuthController.getDisconnect);
-router.post('/files', FilesController.postUpload);
+router.get('/status', (req, res) => {
+  if (redisClient.redisClient.isAlive() && dbClient.isAlive()) {
+    res.status(200).json({ redis: true, db: true }, 200);
+  } else {
+    res.status(404).json({ redis: false, db: false }, 404);
+  }
+});
+
+router.get('/stats', async (req, res) => {
+  const users = await dbClient.nbUsers();
+  const files = await dbClient.nbFiles();
+  const obj = {
+    users,
+    files,
+  };
+  res.status(200).json(obj);
+});
+
+module.exports = router;
