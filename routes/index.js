@@ -14,7 +14,7 @@ router.get('/stats', (req, res) => {
 router.post('/users', (req, res) => {
   UsersController.postNew(req, res);
 });
-router.get('/users/me', (req, res) => {6
+router.get('/users/me', (req, res) => {
   UsersController.getMe(req, res);
 });
 router.get('/connect', (req, res) => {
