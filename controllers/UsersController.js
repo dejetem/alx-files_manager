@@ -1,8 +1,7 @@
 import { ObjectId } from 'mongodb';
-
-const crypto = require('crypto');
-const dbClient = require('../utils/db');
-const redisClient = require('../utils/redis');
+import crypto from 'crypto';
+import RedisClient from '../utils/redis';
+import dbClient from '../utils/db';
 
 function hashPasswd(password) {
   const hash = crypto.createHash('sha1');
@@ -32,7 +31,7 @@ class UsersController {
 
   static async getMe(req, res) {
     const key = req.header('X-Token');
-    const session = await redisClient.get(`auth_${key}`);
+    const session = await RedisClient.get(`auth_${key}`);
     if (!key || key.length === 0) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
@@ -44,4 +43,4 @@ class UsersController {
   }
 }
 
-module.exports = UsersController;
+export default UsersController;

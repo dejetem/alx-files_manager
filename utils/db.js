@@ -28,7 +28,13 @@ class DBClient {
     const collection = await this.db.collection('files');
     return collection.countDocuments();
   }
+
+  async searchUser(collection, email) {
+    this.db = this.client.db(this.database);
+    const user = await this.db.collection(collection).findOne({ email });
+    return user;
+  }
 }
 
 const dbClient = new DBClient();
-module.exports = dbClient;
+export default dbClient;
